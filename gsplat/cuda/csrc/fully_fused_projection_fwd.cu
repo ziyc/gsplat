@@ -185,7 +185,7 @@ __global__ void fully_fused_projection_fwd_kernel(
     // Case 2: mean is outside but radius is large and intersects image
     if ((mean2d.x < 0 || mean2d.x >= image_width || 
          mean2d.y < 0 || mean2d.y >= image_height) &&
-        radius > image_width * 0.125f) { // 1/8 of image width threshold
+        radius > 0.3f * image_width) { // 1/8 of image width threshold
         radii[idx] = 0;
         return;
     }
