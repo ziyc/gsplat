@@ -175,9 +175,17 @@ __global__ void fully_fused_projection_fwd_kernel(
         return;
     }
 
-    // mask out gaussians outside the image region
+    // Case 1: radius is completely outside image bounds
     if (mean2d.x + radius <= 0 || mean2d.x - radius >= image_width ||
         mean2d.y + radius <= 0 || mean2d.y - radius >= image_height) {
+        radii[idx] = 0;
+        return;
+    }
+
+    // Case 2: mean is outside but radius is large and intersects image
+    if ((mean2d.x < 0 || mean2d.x >= image_width || 
+         mean2d.y < 0 || mean2d.y >= image_height) &&
+        radius > image_width * 0.125f) { // 1/8 of image width threshold
         radii[idx] = 0;
         return;
     }
